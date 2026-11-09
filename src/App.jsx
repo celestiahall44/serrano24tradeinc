@@ -1,3 +1,4 @@
+import { useRef } from 'react'
 import logo from '../SerranoLogoNBG.png'
 import './App.css'
 
@@ -5,6 +6,7 @@ const services = [
   {
     number: '01',
     title: 'Electrical',
+    className: 'service-card-photo service-card-electrical',
     description:
       'From new lighting and outlets to panel upgrades, careful electrical work keeps your property running safely.',
     icon: (
@@ -16,6 +18,11 @@ const services = [
   {
     number: '02',
     title: 'New builds',
+    className: 'service-card-photo service-card-new-builds',
+    photoCredit: {
+      href: 'https://commons.wikimedia.org/wiki/File:Electrical_panel_and_subpanel_with_cover_removed_from_subpanel.jpg',
+      text: 'Photo: Gvolk / CC BY-SA 3.0',
+    },
     description:
       'From early plans through the finishing work, get a reliable partner for new residential and commercial construction.',
     icon: (
@@ -27,6 +34,7 @@ const services = [
   {
     number: '03',
     title: 'Renovations',
+    className: 'service-card-photo service-card-renovations',
     description:
       'Thoughtful upgrades for homes and commercial spaces, planned around the way you live or work.',
     icon: (
@@ -46,6 +54,23 @@ function ArrowIcon() {
 }
 
 function App() {
+  const contactDialog = useRef(null)
+
+  function openContact() {
+    contactDialog.current.showModal()
+  }
+
+  function closeOnBackdrop(event) {
+    if (event.target !== event.currentTarget) return
+    const bounds = event.currentTarget.getBoundingClientRect()
+    if (
+      event.clientX < bounds.left || event.clientX > bounds.right ||
+      event.clientY < bounds.top || event.clientY > bounds.bottom
+    ) {
+      event.currentTarget.close()
+    }
+  }
+
   return (
     <div className="site-shell">
       <header className="site-header">
@@ -56,10 +81,11 @@ function App() {
         </a>
         <nav className="main-nav" aria-label="Main navigation">
           <a href="#services">Services</a>
+          <a href="#projects">Projects</a>
           <a href="#about">Our approach</a>
-          <a className="nav-cta" href="#contact">
+          <button className="contact-trigger nav-cta" type="button" onClick={openContact} aria-haspopup="dialog">
             Get a quote <ArrowIcon />
-          </a>
+          </button>
         </nav>
       </header>
 
@@ -80,9 +106,9 @@ function App() {
               commercial projects.
             </p>
             <div className="hero-actions">
-              <a className="button button-primary" href="#contact">
+              <button className="contact-trigger button button-primary" type="button" onClick={openContact} aria-haspopup="dialog">
                 Let’s talk about your project <ArrowIcon />
-              </a>
+              </button>
               <a className="text-link" href="#services">
                 Explore our services <span>↓</span>
               </a>
@@ -101,10 +127,7 @@ function App() {
             <div className="hero-photo-shade" />
             <div className="photo-caption">
               <span className="caption-line" />
-              <span>MADE FOR THE WAY YOU LIVE &amp; WORK</span>
-            </div>
-            <div className="hero-brand-panel">
-              <img src={logo} alt="Serrano24 Trading logo" />
+              <span>THOUGHTFUL LIGHTING. DEPENDABLE ELECTRICAL.</span>
             </div>
           </div>
           <div className="hero-scroll" aria-hidden="true">SCROLL TO EXPLORE <span>↓</span></div>
@@ -123,18 +146,50 @@ function App() {
           </div>
           <div className="service-grid">
             {services.map((service) => (
-              <article className="service-card" key={service.number}>
+              <article className={`service-card ${service.className || ''}`} key={service.number}>
                 <div className="service-card-top">
                   <span>{service.number} / 03</span>
                   <div className="service-icon">{service.icon}</div>
                 </div>
                 <h3>{service.title}</h3>
                 <p>{service.description}</p>
-                <a href="#contact" aria-label={`Ask us about ${service.title}`}>
+                <button className="contact-trigger" type="button" onClick={openContact} aria-haspopup="dialog" aria-label={`Ask us about ${service.title}`}>
                   Discuss this service <ArrowIcon />
-                </a>
+                </button>
+                {service.photoCredit && (
+                  <a className="service-photo-credit" href={service.photoCredit.href}>
+                    {service.photoCredit.text}
+                  </a>
+                )}
               </article>
             ))}
+          </div>
+        </section>
+
+        <section className="projects section-wrap" id="projects" aria-labelledby="projects-heading">
+          <div className="section-heading">
+            <div>
+              <div className="eyebrow dark-eyebrow"><span /> OUR WORK</div>
+              <h2 id="projects-heading">Completed <span>projects.</span></h2>
+            </div>
+            <p>
+              A closer look at our work, from the first detail to the final finish.
+            </p>
+          </div>
+          <div className="projects-placeholder">
+            <svg viewBox="0 0 48 48" aria-hidden="true">
+              <rect x="6" y="8" width="36" height="32" rx="2" />
+              <circle cx="17" cy="18" r="3" />
+              <path d="m6 34 10-10 8 8 8-12 10 14" />
+            </svg>
+            <h3>Project spotlight coming soon.</h3>
+            <p>
+              We’re putting together photos and details of our completed projects.
+              Check back soon to see the work up close.
+            </p>
+            <button className="contact-trigger text-link" type="button" onClick={openContact} aria-haspopup="dialog">
+              Tell us about your project <ArrowIcon />
+            </button>
           </div>
         </section>
 
@@ -160,9 +215,34 @@ function App() {
               <div><span>02</span> Thoughtful, detail-focused workmanship</div>
               <div><span>03</span> Licensed and insured</div>
             </div>
-            <a className="text-link light-link" href="#contact">
+            <a className="text-link light-link" href="#owner">
               Get to know your contractor <ArrowIcon />
             </a>
+          </div>
+        </section>
+
+        <section className="owner section-wrap" id="owner" aria-labelledby="owner-heading">
+          <div className="owner-portrait-placeholder">
+            <svg viewBox="0 0 64 64" aria-hidden="true">
+              <circle cx="32" cy="22" r="11" />
+              <path d="M12 56v-5a20 20 0 0 1 40 0v5" />
+            </svg>
+            <span>Owner portrait coming soon</span>
+          </div>
+          <div className="owner-copy section-heading">
+            <div className="eyebrow dark-eyebrow"><span /> THE PERSON BEHIND THE WORK</div>
+            <h2 id="owner-heading">Meet the <span>owner.</span></h2>
+            <p>
+              Every project starts with a conversation. Get to know the person
+              behind Serrano24TradeInc.
+            </p>
+            <p className="owner-bio-placeholder">
+              A personal introduction, background, and story behind the business
+              are coming soon.
+            </p>
+            <button className="contact-trigger text-link" type="button" onClick={openContact} aria-haspopup="dialog">
+              Let’s talk about your project <ArrowIcon />
+            </button>
           </div>
         </section>
 
@@ -176,18 +256,52 @@ function App() {
                 start with a conversation and help you figure out a good next step.
               </p>
             </div>
-            <a className="button button-light" href="mailto:?subject=Let%27s%20talk%20about%20my%20new%20build%20or%20renovation">
+            <button className="contact-trigger button button-light" type="button" onClick={openContact} aria-haspopup="dialog">
               Start a conversation <ArrowIcon />
-            </a>
+            </button>
           </div>
         </section>
       </main>
 
       <footer className="site-footer">
-        <a className="footer-brand" href="#home">SERRANO<span>24</span> CONTRACTING</a>
+        <a className="footer-brand" href="#home">SERRANO<span>24</span>TRADEINC.</a>
         <span>Residential &amp; commercial · New builds · Renovations · Electrical</span>
         <a href="#home">Back to top ↑</a>
       </footer>
+
+      <dialog className="contact-modal" ref={contactDialog} aria-labelledby="contact-modal-heading" aria-describedby="contact-modal-description" onClick={closeOnBackdrop}>
+        <form method="dialog" className="contact-modal-close">
+          <button type="submit" aria-label="Close contact dialog">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="m6 6 12 12M18 6 6 18" />
+            </svg>
+          </button>
+        </form>
+        <div className="eyebrow"><span /> LET’S BUILD SOMETHING</div>
+        <h2 id="contact-modal-heading">Let’s talk about <span>your project.</span></h2>
+        <p id="contact-modal-description">
+          Contact Sergio Serrano or reach Holly Moore at the office to discuss
+          your project or request a quote. Please leave a message if we miss your
+          call, or feel free to text either number.
+        </p>
+        <div className="contact-modal-links">
+          <a href="tel:+13239947108">
+            <span>CELL · SERGIO SERRANO</span>
+            <strong>323-994-7108</strong>
+            <ArrowIcon />
+          </a>
+          <a href="tel:+12136104036">
+            <span>OFFICE · HOLLY MOORE</span>
+            <strong>213-610-4036</strong>
+            <ArrowIcon />
+          </a>
+          <a href="mailto:serrano24trade@gmail.com">
+            <span>EMAIL SERGIO</span>
+            <strong>serrano24trade@gmail.com</strong>
+            <ArrowIcon />
+          </a>
+        </div>
+      </dialog>
     </div>
   )
 }
