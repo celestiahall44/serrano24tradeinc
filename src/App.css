@@ -443,6 +443,153 @@
   color: #e66822;
 }
 
+.service-card > a {
+  display: flex;
+  width: fit-content;
+}
+
+.service-detail-electrical {
+  background-color: #171819;
+  background-image:
+    radial-gradient(ellipse at top right, rgba(255, 118, 40, 0.1), transparent 60%),
+    linear-gradient(rgba(248, 246, 242, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(248, 246, 242, 0.025) 1px, transparent 1px);
+  background-size: auto, 56px 56px, 56px 56px;
+}
+
+.service-detail-renovations {
+  background: linear-gradient(135deg, #f5f0e7, #ede4d6);
+}
+
+.service-detail .section-heading h2 {
+  max-width: 620px;
+}
+
+.service-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 32px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.service-detail-item {
+  padding-top: 24px;
+  border-top: 1px solid #d8d6d0;
+}
+
+.service-detail-number {
+  color: #e66822;
+  font-size: 13.5px;
+  letter-spacing: 0.12em;
+}
+
+.service-detail-item h3 {
+  margin: 22px 0 12px;
+  color: #1c1c1a;
+  font-size: 31.5px;
+  font-weight: 500;
+  letter-spacing: -0.035em;
+}
+
+.service-detail-item p,
+.service-detail-actions p {
+  color: #696860;
+  font-size: 18px;
+  line-height: 1.8;
+}
+
+.service-detail-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-top: 40px;
+  padding-top: 28px;
+  border-top: 1px solid #d8d6d0;
+}
+
+.service-detail-actions p {
+  max-width: 540px;
+  margin: 0;
+}
+
+.service-detail-actions .text-link {
+  color: #242420;
+}
+
+.service-detail-actions .text-link svg {
+  color: #e66822;
+}
+
+.service-detail-electrical .dark-eyebrow,
+.service-detail-electrical .service-detail-number {
+  color: #ff914f;
+}
+
+.service-detail-electrical .section-heading h2,
+.service-detail-electrical .service-detail-item h3,
+.service-detail-electrical .text-link {
+  color: #f8f6f2;
+}
+
+.service-detail-electrical .section-heading h2 span {
+  color: #ff914f;
+}
+
+.service-detail-electrical .section-heading > p,
+.service-detail-electrical .service-detail-item p,
+.service-detail-electrical .service-detail-actions p {
+  color: #b6b5b2;
+}
+
+.service-detail-electrical .service-detail-item {
+  padding: 28px;
+  border: 1px solid #424140;
+  border-top: 3px solid #ff7628;
+  background: rgba(23, 24, 25, 0.8);
+}
+
+.service-detail-electrical .service-detail-number {
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid #686660;
+}
+
+.service-detail-electrical .service-detail-actions {
+  border-color: #424140;
+}
+
+.service-detail-renovations .section-heading h2 span {
+  color: #80634d;
+}
+
+.service-detail-renovations .service-detail-item {
+  padding: 30px;
+  border: 1px solid #ded3c4;
+  border-radius: 16px 16px 4px 4px;
+  background: #faf7f1;
+  box-shadow: 0 8px 24px rgba(66, 45, 28, 0.04);
+}
+
+.service-detail-renovations .service-detail-number {
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  color: #8c431b;
+  background: #f4e3d2;
+}
+
+.service-detail-renovations .service-detail-actions {
+  border-color: #d3c4b1;
+}
+
 .projects {
   background: #eeece6;
 }
@@ -710,6 +857,10 @@
 }
 
 @media (max-width: 900px) {
+  .service-detail-grid {
+    grid-template-columns: 1fr;
+  }
+
   .hero {
     grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
   }
@@ -1011,26 +1162,16 @@
     url('https://images.unsplash.com/photo-1718221621618-e477ce33485a?auto=format&fit=crop&w=1400&q=85') center / cover;
 }
 
-.service-card-new-builds {
+.service-card-panels {
   background-image:
     linear-gradient(180deg, rgba(16, 17, 18, 0.6), rgba(16, 17, 18, 0.92)),
-    url('https://upload.wikimedia.org/wikipedia/commons/e/ef/Electrical_panel_and_subpanel_with_cover_removed_from_subpanel.jpg');
+    url('https://upload.wikimedia.org/wikipedia/commons/1/1e/ElectricalPanel.jpg');
 }
 
 .service-card-renovations {
   background-image:
     linear-gradient(180deg, rgba(16, 17, 18, 0.6), rgba(16, 17, 18, 0.92)),
     url('https://images.pexels.com/photos/28184693/pexels-photo-28184693.jpeg?auto=compress&cs=tinysrgb&w=1200');
-}
-
-.service-card > .service-photo-credit {
-  display: block;
-  margin-top: 20px;
-  color: #e4e2de;
-  font-size: 13.5px;
-  font-weight: 400;
-  line-height: 1.5;
-  text-decoration: underline;
 }
 
 .service-card-photo h3,
@@ -1152,11 +1293,60 @@ html:has(.contact-modal[open]) {
   overflow-wrap: anywhere;
 }
 
+@keyframes gentle-entrance {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-copy > *,
+  .hero-visual {
+    animation: gentle-entrance 650ms ease-out backwards;
+  }
+
+  .hero-copy h1 {
+    animation-delay: 80ms;
+  }
+
+  .hero-description,
+  .hero-visual {
+    animation-delay: 160ms;
+  }
+
+  .hero-actions {
+    animation-delay: 240ms;
+  }
+
+  .hero-proof {
+    animation-delay: 320ms;
+  }
+
+  .scroll-reveal {
+    transition: opacity 750ms ease-out, transform 750ms ease-out;
+  }
+
+  .reveal-pending:not(:focus-within) {
+    opacity: 0;
+    transform: translateY(32px);
+  }
+
+  .scroll-reveal:focus-within {
+    transition: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
+    animation: none !important;
   }
 }

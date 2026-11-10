@@ -1,14 +1,16 @@
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import logo from '../SerranoLogoNBG.png'
 import './App.css'
 
 const services = [
   {
     number: '01',
-    title: 'Electrical',
+    title: 'Residential electrical',
+    detailHref: '#electrical',
+    detailLabel: 'Explore electrical work',
     className: 'service-card-photo service-card-electrical',
     description:
-      'From new lighting and outlets to panel upgrades, careful electrical work keeps your property running safely.',
+      'Lighting, outlets, and electrical upgrades planned around your home, with careful workmanship and clear communication.',
     icon: (
       <svg viewBox="0 0 48 48" aria-hidden="true">
         <path d="M27 4 11 26h11l-2 18 17-24H25l2-16Z" />
@@ -17,14 +19,12 @@ const services = [
   },
   {
     number: '02',
-    title: 'New builds',
-    className: 'service-card-photo service-card-new-builds',
-    photoCredit: {
-      href: 'https://commons.wikimedia.org/wiki/File:Electrical_panel_and_subpanel_with_cover_removed_from_subpanel.jpg',
-      text: 'Photo: Gvolk / CC BY-SA 3.0',
-    },
+    title: 'Panel upgrades',
+    detailHref: '#electrical',
+    detailLabel: 'Explore panel upgrades',
+    className: 'service-card-photo service-card-panels',
     description:
-      'From early plans through the finishing work, get a reliable partner for new residential and commercial construction.',
+      'Update your home’s electrical panel to support everyday needs and planned improvements, with attention to safety and detail.',
     icon: (
       <svg viewBox="0 0 48 48" aria-hidden="true">
         <path d="m6 22 18-14 18 14M11 20v21h26V20M19 41V27h10v14M18 18h.01M30 18h.01" />
@@ -33,15 +33,66 @@ const services = [
   },
   {
     number: '03',
-    title: 'Renovations',
+    title: 'Home renovations',
+    detailHref: '#renovations',
+    detailLabel: 'Explore home renovations',
     className: 'service-card-photo service-card-renovations',
     description:
-      'Thoughtful upgrades for homes and commercial spaces, planned around the way you live or work.',
+      'From single-room updates to larger home remodels, thoughtful improvements built around the way you and your family live.',
     icon: (
       <svg viewBox="0 0 48 48" aria-hidden="true">
         <path d="M7 22 24 8l17 14M12 20v21h24V20M20 41V28h8v13" />
       </svg>
     ),
+  },
+]
+
+const serviceDetails = [
+  {
+    id: 'electrical',
+    eyebrow: 'RESIDENTIAL ELECTRICAL',
+    title: 'Everyday power.',
+    accent: 'Thoughtfully planned.',
+    description: 'From a single fixture to a panel upgrade, electrical work built around how you use your home.',
+    items: [
+      {
+        title: 'Lighting that works for you',
+        description: 'Update fixtures and lighting layouts to make your rooms more comfortable and useful.',
+      },
+      {
+        title: 'Outlets & electrical updates',
+        description: 'Plan outlet improvements and electrical upgrades around everyday needs, furniture, and the way you live.',
+      },
+      {
+        title: 'Panel upgrades',
+        description: 'Discuss your existing panel, your home’s electrical needs, and the improvements you’re planning next.',
+      },
+    ],
+    closing: 'Updating one room or planning ahead? Let’s talk through your electrical needs.',
+    action: 'Discuss electrical work',
+  },
+  {
+    id: 'renovations',
+    eyebrow: 'HOME RENOVATIONS',
+    title: 'The home you know.',
+    accent: 'A fresh start.',
+    description: 'Thoughtful updates for the spaces you use most, with clear communication from the first conversation.',
+    items: [
+      {
+        title: 'Single-room updates',
+        description: 'Refresh a room with improvements shaped around what works, what doesn’t, and what you want to change.',
+      },
+      {
+        title: 'Larger home remodels',
+        description: 'Bring your ideas together into a clear scope for a more connected, comfortable home.',
+      },
+      {
+        title: 'Electrical planning',
+        description: 'Consider lighting, outlets, and electrical needs early so they fit naturally into your renovation.',
+      },
+    ],
+    closing: 'Have a space in mind? Tell us what you’d like to improve and we’ll discuss the next step.',
+    action: 'Discuss a home renovation',
   },
 ]
 
@@ -55,6 +106,53 @@ function ArrowIcon() {
 
 function App() {
   const contactDialog = useRef(null)
+  const siteShell = useRef(null)
+
+  useEffect(() => {
+    const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)')
+    if (motionPreference.matches || !('IntersectionObserver' in window)) return
+
+    const targets = [...siteShell.current.querySelectorAll(
+      '.section-heading, .service-card, .service-detail-item, .service-detail-actions, .projects-placeholder, .about-image, .about-copy, .owner-portrait-placeholder, .contact-inner',
+    )]
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.remove('reveal-pending')
+          observer.unobserve(entry.target)
+        }
+      })
+    }, { threshold: 0.05 })
+
+    targets.forEach((target) => {
+      if (target.getBoundingClientRect().top >= window.innerHeight) {
+        target.classList.add('scroll-reveal', 'reveal-pending')
+        observer.observe(target)
+      }
+    })
+
+    function clearReveals() {
+      observer.disconnect()
+      targets.forEach((target) => target.classList.remove('scroll-reveal', 'reveal-pending'))
+    }
+
+    function handleMotionChange(event) {
+      if (event.matches) clearReveals()
+    }
+
+    function revealOnFocus(event) {
+      event.currentTarget.classList.remove('reveal-pending')
+      observer.unobserve(event.currentTarget)
+    }
+
+    targets.forEach((target) => target.addEventListener('focusin', revealOnFocus))
+    motionPreference.addEventListener('change', handleMotionChange)
+    return () => {
+      clearReveals()
+      targets.forEach((target) => target.removeEventListener('focusin', revealOnFocus))
+      motionPreference.removeEventListener('change', handleMotionChange)
+    }
+  }, [])
 
   function openContact() {
     contactDialog.current.showModal()
@@ -72,7 +170,7 @@ function App() {
   }
 
   return (
-    <div className="site-shell">
+    <div className="site-shell" ref={siteShell}>
       <header className="site-header">
         <a className="brand" href="#home" aria-label="Serrano24 Contracting home">
           <img src={logo} alt="Serrano24 logo" />
@@ -92,18 +190,18 @@ function App() {
       <main>
         <section className="hero" id="home">
           <div className="hero-copy">
-            <div className="eyebrow"><span /> RESIDENTIAL · COMMERCIAL · NEW BUILDS · RENOVATIONS</div>
+            <div className="eyebrow"><span /> RESIDENTIAL ELECTRICAL · HOME RENOVATIONS</div>
             <h1>
-              Good work.
+              Your home.
               <br />
               <span>Done right.</span>
               <br />
               Built to last.
             </h1>
             <p className="hero-description">
-              From ground-up builds to electrical work and thoughtful renovations,
-              we bring care and clear communication to residential and
-              commercial projects.
+              Residential electrical work comes first, from lighting and outlets
+              to panel upgrades. When it’s time to renovate, we bring that same
+              care and clear communication to your home.
             </p>
             <div className="hero-actions">
               <button className="contact-trigger button button-primary" type="button" onClick={openContact} aria-haspopup="dialog">
@@ -115,7 +213,7 @@ function App() {
             </div>
             <div className="hero-proof">
               <span className="proof-mark" aria-hidden="true">✓</span>
-              <span><strong>Licensed &amp; insured</strong><br />Residential and commercial projects.</span>
+              <span><strong>Licensed &amp; insured</strong><br />Electrical work and renovations for your home.</span>
             </div>
           </div>
           <div className="hero-visual">
@@ -140,8 +238,8 @@ function App() {
               <h2>One call. <span>Every detail.</span></h2>
             </div>
             <p>
-              From new construction to a single-room renovation, get one dependable
-              partner for your residential or commercial project.
+              From a lighting upgrade to a home renovation, get one dependable
+              partner focused on your home.
             </p>
           </div>
           <div className="service-grid">
@@ -153,18 +251,43 @@ function App() {
                 </div>
                 <h3>{service.title}</h3>
                 <p>{service.description}</p>
+                <a href={service.detailHref}>
+                  {service.detailLabel} <span aria-hidden="true">↓</span>
+                </a>
                 <button className="contact-trigger" type="button" onClick={openContact} aria-haspopup="dialog" aria-label={`Ask us about ${service.title}`}>
                   Discuss this service <ArrowIcon />
                 </button>
-                {service.photoCredit && (
-                  <a className="service-photo-credit" href={service.photoCredit.href}>
-                    {service.photoCredit.text}
-                  </a>
-                )}
               </article>
             ))}
           </div>
         </section>
+
+        {serviceDetails.map((detail) => (
+          <section className={`service-detail service-detail-${detail.id} section-wrap`} id={detail.id} key={detail.id} aria-labelledby={`${detail.id}-heading`}>
+            <div className="section-heading">
+              <div>
+                <div className="eyebrow dark-eyebrow"><span /> {detail.eyebrow}</div>
+                <h2 id={`${detail.id}-heading`}>{detail.title} <span>{detail.accent}</span></h2>
+              </div>
+              <p>{detail.description}</p>
+            </div>
+            <ul className="service-detail-grid">
+              {detail.items.map((item, index) => (
+                <li className="service-detail-item" key={item.title}>
+                  <span className="service-detail-number" aria-hidden="true">0{index + 1}</span>
+                  <h3>{item.title}</h3>
+                  <p>{item.description}</p>
+                </li>
+              ))}
+            </ul>
+            <div className="service-detail-actions">
+              <p>{detail.closing}</p>
+              <button className="contact-trigger text-link" type="button" onClick={openContact} aria-haspopup="dialog">
+                {detail.action} <ArrowIcon />
+              </button>
+            </div>
+          </section>
+        ))}
 
         <section className="projects section-wrap" id="projects" aria-labelledby="projects-heading">
           <div className="section-heading">
@@ -173,7 +296,7 @@ function App() {
               <h2 id="projects-heading">Completed <span>projects.</span></h2>
             </div>
             <p>
-              A closer look at our work, from the first detail to the final finish.
+              A closer look at our residential electrical work and home renovations.
             </p>
           </div>
           <div className="projects-placeholder">
@@ -206,9 +329,9 @@ function App() {
             <div className="eyebrow"><span /> THE SERRANO24 STANDARD</div>
             <h2>Built with care. <span>Renewed with purpose.</span></h2>
             <p>
-              New builds and renovations deserve a team that listens, communicates,
-              and pays attention to the details. We bring that same care to
-              residential and commercial spaces.
+              Your home deserves an electrician who listens, communicates, and
+              pays attention to the details. From electrical upgrades to home
+              renovations, we treat your space with care.
             </p>
             <div className="values-list">
               <div><span>01</span> Clear communication, start to finish</div>
@@ -250,9 +373,9 @@ function App() {
           <div className="contact-inner">
             <div className="contact-copy">
               <div className="eyebrow"><span /> HAVE A PROJECT IN MIND?</div>
-              <h2>Planning a new build or renovation? <span>Let’s talk.</span></h2>
+              <h2>Electrical work or a home renovation? <span>Let’s talk.</span></h2>
               <p>
-                Tell us about your residential or commercial project. We’ll
+                Tell us what you’d like to improve in your home. We’ll
                 start with a conversation and help you figure out a good next step.
               </p>
             </div>
@@ -265,7 +388,7 @@ function App() {
 
       <footer className="site-footer">
         <a className="footer-brand" href="#home">SERRANO<span>24</span>TRADEINC.</a>
-        <span>Residential &amp; commercial · New builds · Renovations · Electrical</span>
+        <span>Residential electrical · Panel upgrades · Home renovations</span>
         <a href="#home">Back to top ↑</a>
       </footer>
 
@@ -277,11 +400,12 @@ function App() {
             </svg>
           </button>
         </form>
-        <div className="eyebrow"><span /> LET’S BUILD SOMETHING</div>
+        <div className="eyebrow"><span /> LET’S IMPROVE YOUR HOME</div>
         <h2 id="contact-modal-heading">Let’s talk about <span>your project.</span></h2>
         <p id="contact-modal-description">
           Contact Sergio Serrano or reach Holly Moore at the office to discuss
-          your project or request a quote. Please leave a message if we miss your
+          your home’s electrical needs or renovation plans and request a quote.
+          Please leave a message if we miss your
           call, or feel free to text either number.
         </p>
         <div className="contact-modal-links">
